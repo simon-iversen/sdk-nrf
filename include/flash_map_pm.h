@@ -20,14 +20,14 @@
 #if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS)
 #define storage settings_storage
 #elif CONFIG_FILE_SYSTEM_LITTLEFS
-#define storage littlefs_storage
+#define lfs_storage littlefs_storage
 #elif CONFIG_NVS
 #define storage nvs_storage
 #endif
 
-#if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS) && CONFIG_FILE_SYSTEM_LITTLEFS
-#error "Not supported"
-#endif
+//#if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS) && CONFIG_FILE_SYSTEM_LITTLEFS
+//#error "Not supported"
+//#endif
 
 #define PM_ID(label) PM_##label##_ID
 #define PM_IS_ENABLED(label) PM_##label##_IS_ENABLED
