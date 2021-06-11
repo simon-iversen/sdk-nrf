@@ -1,0 +1,7 @@
+
+&i2c1 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    sda-pin = < 30 >;
+    scl-pin = < 31 >;
+};
