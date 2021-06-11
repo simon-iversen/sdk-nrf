@@ -11,6 +11,9 @@
 #include <zephyr/types.h>
 #include <zephyr.h>
 #include <drivers/uart.h>
+#include <mgmt/mcumgr/smp_bt.h>
+#include "os_mgmt/os_mgmt.h"
+#include "img_mgmt/img_mgmt.h"
 
 #include <device.h>
 #include <soc.h>
@@ -485,6 +488,8 @@ void main(void)
 	int blink_status = 0;
 	int err = 0;
 
+	printk("Application version 1.0.0\n");
+
 	configure_gpio();
 
 	err = uart_init();
@@ -493,6 +498,12 @@ void main(void)
 	}
 
 	bt_conn_cb_register(&conn_callbacks);
+
+	/* Initialize the Bluetooth mcumgr transport. */
+	smp_bt_register();
+	os_mgmt_register_group();
+	
+	img_mgmt_register_group();
 
 	if (IS_ENABLED(CONFIG_BT_NUS_SECURITY_ENABLED)) {
 		bt_conn_auth_cb_register(&conn_auth_callbacks);
@@ -533,11 +544,11 @@ void main(void)
 
 void ble_write_thread(void)
 {
-	/* Don't go any further until BLE is initialized */
+	// Don't go any further until BLE is initialized 
 	k_sem_take(&ble_init_ok, K_FOREVER);
 
 	for (;;) {
-		/* Wait indefinitely for data to be sent over bluetooth */
+		// Wait indefinitely for data to be sent over bluetooth 
 		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
 						     K_FOREVER);
 
@@ -549,5 +560,24 @@ void ble_write_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,
-		NULL, PRIORITY, 0, 0);
+void uart_write_thread(void)
+{
+	// Don't go any further until BLE is initialized 
+	k_sem_take(&ble_init_ok, K_FOREVER);
+
+	for (;;) {
+		// Wait indefinitely for data to be sent over bluetooth 
+		struct uart_data_t *buf = k_fifo_get(&fifo_uart_rx_data,
+						     K_FOREVER);
+
+		/*if (bt_nus_send(NULL, buf->data, buf->len)) {
+			LOG_WRN("Failed to send data over BLE connection");
+		}*/
+
+		k_free(buf);
+	}
+}
+
+
+K_THREAD_DEFINE(ble_write_thread_id, STACKSIZE, ble_write_thread, NULL, NULL,NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(uart_write_thread_id, STACKSIZE, uart_write_thread, NULL, NULL,NULL, PRIORITY, 0, 0);
