@@ -19,6 +19,7 @@
 
 void main(void)
 {
+	printk("IN NETBOOT\n");
 	int err = fprotect_area(PM_B0N_CONTAINER_ADDRESS,
 				PM_B0N_CONTAINER_SIZE);
 	const struct device *fdev = device_get_binding(FLASH_NAME);
@@ -39,7 +40,7 @@ void main(void)
 
 		valid = bl_validate_firmware(s0_addr, update_addr);
 		if (!valid) {
-			printk("Unable to find valid firmware inside %p\n\r",
+			printk("Unable to find valid firmware inside yo %p\n\r",
 				(void *)update_addr);
 			goto failure;
 		}
@@ -56,10 +57,11 @@ void main(void)
 		 * done to verify that the flash copy operation was successful.
 		 */
 		valid = bl_validate_firmware(s0_addr, s0_addr);
+		valid = false;
 		if (valid) {
 			pcd_fw_copy_done();
 		} else {
-			printk("Unable to find valid firmware inside %p\n\r",
+			printk("Unable to find valid firmware inside yi %p\n\r",
 				(void *)s0_addr);
 			goto failure;
 		}
@@ -75,7 +77,7 @@ void main(void)
 		printk("Failed to protect app flash: %d\n\r", err);
 		goto failure;
 	}
-
+	printk("BOOTING IMAGE\n\r");
 	bl_boot(fw_info_find(s0_addr));
 	return;
 
