@@ -40,7 +40,7 @@ void main(void)
 
 		valid = bl_validate_firmware(s0_addr, update_addr);
 		if (!valid) {
-			printk("Unable to find valid firmware inside yo %p\n\r",
+			printk("Unable to find valid firmware inside %p\n\r",
 				(void *)update_addr);
 			goto failure;
 		}
@@ -61,7 +61,7 @@ void main(void)
 		if (valid) {
 			pcd_fw_copy_done();
 		} else {
-			printk("Unable to find valid firmware inside yi %p\n\r",
+			printk("Unable to find valid firmware inside %p\n\r",
 				(void *)s0_addr);
 			goto failure;
 		}
