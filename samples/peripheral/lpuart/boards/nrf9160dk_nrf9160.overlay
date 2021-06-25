@@ -15,8 +15,9 @@
 	};
 };
 
+
 &uart0 {
-	status = "disabled";
+//	status = "disabled";
 };
 
 &gpiote {
